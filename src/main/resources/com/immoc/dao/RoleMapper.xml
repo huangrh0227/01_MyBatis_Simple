@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.immoc.dao.RoleMapper">
+    <resultMap id="roleMap" type="Role">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName" />
+        <result column="role_desc" property="roleDesc" />
+    </resultMap>
+    <sql id="defaultSql">
+        id,role_name,role_desc
+    </sql>
+    <insert id="addRole" parameterType="Role">
+        <selectKey keyColumn="id" keyProperty="id" resultType="int">
+            select last_insert_id()
+        </selectKey>
+        insert into role(role_name,role_desc)
+        values(#{roleName},#{roleDesc})
+    </insert>
+    <select id="findById" resultMap="roleMap" parameterType="int">
+        select
+        <include refid="defaultSql"></include>
+        from role
+        where id = #{id}
+    </select>
+    <delete id="deleteRole" parameterType="int">
+        delete from role
+        where id = #{id}
+    </delete>
+    <update id="updateRole" parameterType="Role">
+        update role
+        set role_name = #{roleName}
+        ,role_desc = #{roleDesc}
+        where id = #{id}
+    </update>
+    <select id="findByRoleName" resultMap="roleMap" parameterType="string">
+        select
+        <include refid="defaultSql"></include>
+        from role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                and role_name like #{roleName}
+            </if>
+        </where>
+    </select>
+    <select id="findTotal" resultType="int">
+        select count(1)
+        from role
+    </select>
+    <select id="findByUserIds" resultMap="roleMap" parameterType="java.util.List">
+        select
+        <include refid="defaultSql"></include>
+        from role
+        <where>
+            <if test="list != null and list.size() > 0">
+                <foreach collection="list" item="id" open="id in(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

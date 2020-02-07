@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.immoc.dao.UserMapper">
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
+    <sql id="defaultSql">
+        id,username,birthday,sex,address
+    </sql>
+    <resultMap id="userResultMap" type="User">
+        <id column="id" property="id"/>
+        <result column="username" property="userName"/>
+        <result column="birthday" property="birthday"/>
+        <result column="sex" property="sex"/>
+        <result column="address" property="address"/>
+        <!--添加懒加载添加fetchType="lazy"-->
+        <collection property="accounts" ofType="Account" column="id" select="com.immoc.dao.AccountMapper.findAccountsByUserId"></collection>
+    </resultMap>
+    <select id="findByUserId" resultMap="userResultMap" parameterType="int">
+        select
+        <include refid="defaultSql"></include>
+        from user
+        where id = #{userId}
+    </select>
+</mapper>

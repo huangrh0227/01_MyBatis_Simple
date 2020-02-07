@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.immoc.dao.AccountMapper">
+    <resultMap id="accountResultMap" type="com.immoc.domain.Account">
+        <id column="id" property="id"/>
+        <result column="uid" property="uid"/>
+        <result column="money" property="money"/>
+        <association property="user" javaType="User" column="uid" select="com.immoc.dao.UserMapper.findByUserId"></association>
+    </resultMap>
+    <sql id="defaultSql">
+        id,uid,money
+    </sql>
+    <select id="findAccountById" resultMap="accountResultMap" parameterType="int">
+        select
+        <include refid="defaultSql"></include>
+        from account a
+        where a.id = #{accountId}
+    </select>
+    <select id="findAccountsByUserId" resultMap="accountResultMap" parameterType="int">
+        select
+        <include refid="defaultSql"></include>
+        from account
+        where uid = #{userId}
+    </select>
+</mapper>
